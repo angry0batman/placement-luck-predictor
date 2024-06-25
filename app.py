@@ -99,14 +99,14 @@ st.markdown("""
     
     <!-- Navigation Bar -->
     <div class="navbar">
-        <a href="#home">Home</a>
+        <a href="https://ctc-sure.vercel.app">Home</a>
         <a href="#contact">Contact Us</a>
     </div>
     """, unsafe_allow_html=True)
 
 # Main content
 st.title("Welcome to the Placement Prediction App")
-st.markdown("## Check Your Placement Chance")
+
 
 # Main content - Prediction Form
 dsa_score = st.number_input('DSA Score', min_value=0.0, max_value=100.0, value=50.0)
