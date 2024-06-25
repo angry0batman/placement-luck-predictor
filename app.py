@@ -48,43 +48,67 @@ def predict_placement(dsa_score, resume_score, communication_score, development_
 # Streamlit app
 st.set_page_config(page_title='Placement Prediction App', page_icon='🎓', layout='wide')
 
-# HTML & CSS
+# HTML & CSS for Navigation Bar and Footer
 st.markdown("""
     <style>
-    .main {
-        background-color: #f0f2f6;
-    }
-    .stButton>button {
-        color: white;
-        background-color: #4CAF50;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
+    /* Navigation Bar */
+    .navbar {
+        overflow: hidden;
+        background-color: #333;
+        position: relative;
+        width: 100%;
+        padding: 10px 0;
         text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        transition-duration: 0.4s;
     }
-    .stButton>button:hover {
-        background-color: white;
+
+    .navbar a {
+        display: inline-block;
+        color: white;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+
+    .navbar a:hover {
+        background-color: #ddd;
         color: black;
-        border: 2px solid #4CAF50;
+    }
+
+    /* Footer */
+    .footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .footer p {
+        margin: 0;
+    }
+    
+    .main-content {
+        margin-top: 20px;
+        padding: 20px;
     }
     </style>
+    
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="#home">Home</a>
+        <a href="#contact">Contact Us</a>
+    </div>
     """, unsafe_allow_html=True)
 
-# Title and header
-st.markdown("""
-    <h1 style='text-align: center; color: #4CAF50;'>Check Your Placement Chance</h1>
-    <hr>
-    """, unsafe_allow_html=True)
+# Main content
+st.title("Welcome to the Placement Prediction App")
+st.markdown("## Check Your Placement Chance")
 
-# Input fields
-st.write("## Enter the following details:")
-
+# Main content - Prediction Form
 dsa_score = st.number_input('DSA Score', min_value=0.0, max_value=100.0, value=50.0)
 resume_score = st.number_input('Resume Score', min_value=0.0, max_value=100.0, value=50.0)
 communication_score = st.number_input('Communication Score', min_value=0.0, max_value=100.0, value=50.0)
@@ -98,3 +122,10 @@ if st.button('Predict Placement'):
             st.success('🎉 The student is likely to be placed.')
         else:
             st.error('😔 The student is unlikely to be placed.')
+
+# Footer
+st.markdown("""
+    <div class="footer">
+        <p>© 2024 Placement Prediction App. All rights reserved.</p>
+    </div>
+    """, unsafe_allow_html=True)
