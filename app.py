@@ -1,7 +1,16 @@
 import streamlit as st
 import joblib
 import numpy as np
+import pandas as pd
+import logging
 from sklearn.preprocessing import StandardScaler
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Suppress specific FutureWarning from Pandas
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="pyarrow.pandas_compat")
 
 # Load the model and scaler
 model = joblib.load('placement_model.pkl')
@@ -10,34 +19,30 @@ scaler = joblib.load('scaler.pkl')
 # Function to make predictions
 def predict_placement(dsa_score, resume_score, communication_score, development_score, college_tier):
     try:
-        features = np.array([[dsa_score, resume_score, communication_score, development_score, college_tier]])
+        # Create a DataFrame with column names
+        features = pd.DataFrame([[dsa_score, resume_score, communication_score, development_score, college_tier]], 
+                                columns=['dsa_score', 'resume_score', 'communication_score', 'development_score', 'college_tier'])
 
-        # Debug: print the features array
-        st.write("Features array (before scaling):", features)
-        st.write("Features array shape (before scaling):", features.shape)
+        # Log the features DataFrame
+        logging.info(f"Features DataFrame (before scaling):\n{features}")
 
         # Check for missing values
-        if np.any(np.isnan(features)):
+        if features.isnull().values.any():
             st.error("Error: Some input values are missing. Please provide all required inputs.")
-            return None
-
-        # Validate input shape
-        if features.shape[1] != 5:
-            st.error("Error: Invalid input shape. Expected 5 features.")
             return None
 
         # Scale the features
         features_scaled = scaler.transform(features)
 
-        # Debug: print the scaled features array
-        st.write("Scaled features array:", features_scaled)
-        st.write("Scaled features array shape:", features_scaled.shape)
+        # Log the scaled features array
+        logging.info(f"Scaled features array:\n{features_scaled}")
 
         # Make prediction
         prediction = model.predict(features_scaled)
         return prediction
     except Exception as e:
         st.error(f"An error occurred: {e}")
+        logging.error(f"Error during prediction: {e}")
         return None
 
 # Streamlit app
