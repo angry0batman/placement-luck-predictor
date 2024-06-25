@@ -9,10 +9,36 @@ scaler = joblib.load('scaler.pkl')
 
 # Function to make predictions
 def predict_placement(dsa_score, resume_score, communication_score, development_score, college_tier):
-    features = np.array([[dsa_score, resume_score, communication_score, development_score, college_tier]])
-    features_scaled = scaler.transform(features)
-    prediction = model.predict(features_scaled)
-    return prediction
+    try:
+        features = np.array([[dsa_score, resume_score, communication_score, development_score, college_tier]])
+
+        # Debug: print the features array
+        st.write("Features array (before scaling):", features)
+        st.write("Features array shape (before scaling):", features.shape)
+
+        # Check for missing values
+        if np.any(np.isnan(features)):
+            st.error("Error: Some input values are missing. Please provide all required inputs.")
+            return None
+
+        # Validate input shape
+        if features.shape[1] != 5:
+            st.error("Error: Invalid input shape. Expected 5 features.")
+            return None
+
+        # Scale the features
+        features_scaled = scaler.transform(features)
+
+        # Debug: print the scaled features array
+        st.write("Scaled features array:", features_scaled)
+        st.write("Scaled features array shape:", features_scaled.shape)
+
+        # Make prediction
+        prediction = model.predict(features_scaled)
+        return prediction
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        return None
 
 # Streamlit app
 st.set_page_config(page_title='Placement Prediction App', page_icon='🎓', layout='wide')
@@ -62,8 +88,8 @@ college_tier = st.selectbox('College Tier', [1, 2, 3])
 
 if st.button('Predict Placement'):
     result = predict_placement(dsa_score, resume_score, communication_score, development_score, college_tier)
-    if result == 1:
-        st.success('🎉 The student is likely to be placed.')
-    else:
-        st.error('😔 The student is unlikely to be placed.')
-
+    if result is not None:
+        if result == 1:
+            st.success('🎉 The student is likely to be placed.')
+        else:
+            st.error('😔 The student is unlikely to be placed.')
