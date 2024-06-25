@@ -76,7 +76,6 @@ def get_user_input():
 
 # Display HTML content
 st.markdown("""
-    
     <p style='text-align: left;'>Enter your scores below and click 'Predict Placement' to see the result.</p>
     <hr>
 """, unsafe_allow_html=True)
@@ -84,16 +83,24 @@ st.markdown("""
 # Get user input
 user_input = get_user_input()
 
-# Scale user input
-scaled_input = scaler.transform(user_input)
-
-# Make prediction
-if st.button('Predict Placement'):
-    prediction = model.predict(scaled_input)
-    if prediction[0] == 1:
-        st.success('The student is likely to be placed.')
+# Validate and scale user input
+try:
+    if np.isnan(user_input).any():
+        st.error("Input contains missing values. Please provide complete input data.")
+    elif len(user_input.shape) != 2:
+        st.error("Input data shape is incorrect. Expected a 2D array.")
     else:
-        st.error('The student is not likely to be placed.')
+        scaled_input = scaler.transform(user_input)
+
+        # Make prediction
+        if st.button('Predict Placement'):
+            prediction = model.predict(scaled_input)
+            if prediction[0] == 1:
+                st.success('The student is likely to be placed.')
+            else:
+                st.error('The student is not likely to be placed.')
+except Exception as e:
+    st.error(f"An error occurred during prediction: {e}")
 
 # Footer
 st.markdown("""
@@ -101,6 +108,3 @@ st.markdown("""
         <p>&copy; 2024 Placement Prediction App. All rights reserved.</p>
     </footer>
 """, unsafe_allow_html=True)
-
-# To run this app, save this script and run the command:
-# streamlit run placement_app.pys
